@@ -9,6 +9,16 @@
       #{offset}, #{pageSize}
   </select>
 
+  <select id="selectProductsWithoutHistory" resultType="product" parameterType="map">
+    SELECT
+      *
+    FROM product
+    LEFT JOIN product_history ON product.product_no = product_history.product_no
+    WHERE
+      product_history.product_history_seq IS NULL
+    LIMIT #{_skiprows}, #{_pagesize}
+  </select>
+
   <select id="selectProduct" resultType="product">
     SELECT
       *
@@ -42,4 +52,25 @@
     WHERE
       product_no = #{productNo}
   </update>
+
+    <insert id="insertProductHistories" parameterType="product" useGeneratedKeys="false">
+    INSERT INTO product_history
+    (
+      product_no
+      , product_id
+      , product_name
+      , price
+      , create_ymdt
+    )
+    VALUES
+    <foreach collection="productHistories" item="productHistory" open="(" close=")" separator=",">
+    (
+      #{productHistory.productNo}
+      , #{productHistory.productId}
+      , #{productHistory.productName}
+      , #{productHistory.price}
+      , NOW()
+    )
+    </foreach>
+  </insert>
 </mapper>

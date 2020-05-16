@@ -59,6 +59,7 @@ public class BatchConfig {
   public DataSource dataSource() {
     DataSource dataSource = new HikariDataSource(hikariConfig());
     log.info("Loading Datasource : {}", dataSource);
+
     return dataSource;
   }
 
