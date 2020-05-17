@@ -7,7 +7,7 @@ plugins {
   kotlin("plugin.spring") version "1.3.72"
 }
 
-group = "com.hoony9x.sharescrow"
+group = "com.sharescrow"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -20,6 +20,8 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation(group = "javax.validation", name = "validation-api", version = "2.0.1.Final")
+  implementation(group = "org.modelmapper", name = "modelmapper", version = "2.3.0")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("mysql:mysql-connector-java")
   testImplementation("org.springframework.boot:spring-boot-starter-test") {

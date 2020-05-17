@@ -1,4 +1,4 @@
-package com.hoony9x.sharescrow.queue
+package com.sharescrow.queue
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

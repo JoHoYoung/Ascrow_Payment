@@ -1,4 +1,4 @@
-package com.hoony9x.sharescrow.queue
+package com.sharescrow.queue
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
