@@ -4,7 +4,8 @@ import lombok.Getter;
 
 public enum ApplicationError {
   NOT_FOUND(404, 404),
-  BAD_REQUEST(400, 400);
+  BAD_REQUEST(400, 400),
+  FAIL_TO_START_JOB(5001, 500);;
 
   @Getter
   private int code;
