@@ -63,7 +63,7 @@
       , create_ymdt
     )
     VALUES
-    <foreach collection="productHistories" item="productHistory" open="(" close=")" separator=",">
+    <foreach collection="productHistories" item="productHistory" separator=",">
     (
       #{productHistory.productNo}
       , #{productHistory.productId}

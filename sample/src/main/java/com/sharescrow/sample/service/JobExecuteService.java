@@ -1,5 +1,6 @@
 package com.sharescrow.sample.service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.batch.core.Job;
@@ -30,6 +31,7 @@ public class JobExecuteService {
     Job job = (Job)applicationContext.getBean(jobName);
     JobParametersBuilder builder = new JobParametersBuilder();
     parameters.forEach(builder::addString);
+    builder.addLong("DUMMY", System.currentTimeMillis());
     JobParameters jobParameters = builder.toJobParameters();
     try {
       JobExecution jobExecution = jobLauncher.run(job, jobParameters);
