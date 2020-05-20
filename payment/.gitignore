@@ -8,6 +8,8 @@ target/
 log/
 
 
+**/application-prod.properties
+**/logback-prod.properties
 
 ### STS ###
 .apt_generated
