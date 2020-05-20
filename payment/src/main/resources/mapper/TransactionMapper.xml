@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sharescrow.payment.repository.TransactionRepository">
+
+    <select id = "selectOrderById">
+        SELECT `Order` WHERE id = #{id}
+    </select>
+    <select id="update" parameterType="map">
+        UPDATE SET state = #{transaction.state}, platform =#{transaction.platform} , transactionKey = #{transaction.transactionKey},
+         transactionAmount = #{transaction.transactionAmount}, updatedAt = NOW() WHERE id = ${id}
+    </select>
+    <insert id = "insert" parameterType="com.sharescrow.payment.model.Transaction">
+        INSERT INTO Transaction(id,platform, transactionKey, transactionAmount, state, createdAt, updatedAt) VALUES(#{id},#{platform}, #{transactionKey}, #{transactionAmount}, #{state}, #{createdAt}, #{updatedAt})
+    </insert>
+</mapper>

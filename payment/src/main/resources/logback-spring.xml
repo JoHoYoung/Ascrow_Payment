@@ -1,0 +1,53 @@
+<configuration>
+    <springProfile name="dev">
+        <property resource="logback-dev.properties"/>
+    </springProfile>
+    <springProfile name="prod">
+        <property resource="logback-prod.properties"/>
+    </springProfile>
+
+    <property name="LOG_DIR" value="${log.file.path}"/>
+    <property name="LOG_PATH" value="${LOG_DIR}/escrow.log"/>
+    <property name="LOG_ACCESS_PATH" value="${LOG_DIR}/escrowAccess.log"/>
+    <property name="LOG_TRANSACTION_PATH" value="${LOG_DIR}/escrowTransaction.log"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level|[%thread] | %d{yyyy-MM-dd HH:mm:ss} |[ %F:%L ] %method | %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}</file>
+        <encoder>
+            <pattern>%-5level| %d{yyyy-MM-dd HH:mm:ss} |[ %F:%L ] %method | %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/escrow_%d{yyyyMMdd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <appender name="TRANSACTION_ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_TRANSACTION_PATH}</file>
+        <encoder>
+            <pattern>%-5level| [%thread] | %d{yyyy-MM-dd HH:mm:ss} |[ %F:%L ] %method | %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_TRANSACTION_PATH}/escrowTransaction_%d{yyyyMMdd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <logger name="com.sharescrow.payment" level="INFO">
+        <appender-ref ref="ROLLING_FILE"/>
+    </logger>
+    <logger name = "com.sharescrow.payment.config" level="INFO">
+        <appender-ref ref="TRANSACTION_ROLLING_FILE"/>
+    </logger>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

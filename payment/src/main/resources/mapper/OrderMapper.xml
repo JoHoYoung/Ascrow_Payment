@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sharescrow.payment.repository.OrderRepository">
+
+    <select id="selectOrderById">
+        SELECT * FROM `Order` WHERE id = #{id}
+    </select>
+    <select id="selectOrderByUserId" resultType="com.sharescrow.payment.model.Order">
+        SELECT * FROM `Order` WHERE userId = #{userId}
+    </select>
+    <insert id="insert" parameterType="com.sharescrow.payment.model.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `Order`(id,minShare, productId, userId, transactionId, state, createdAt, updatedAt) VALUES(#{id},#{minShare},#{productId},#{userId},#{transactionId},#{state},#{createdAt},#{updatedAt})
+    </insert>
+    <update id="update" parameterType="com.sharescrow.payment.model.Order">
+        UPDATE `Order` SET
+        minShare = #{minShare}, productId = #{productId},
+         userId = #{userId}, transactionId = #{transactionId},
+          state = #{state}, updatedAt = NOW()
+        WHERE id = #{id}
+    </update>
+    <select id="selectOrderByGrouprId">
+        SELECT * FROM `Order` WHERE groupId = #{groupId}
+    </select>
+</mapper>
