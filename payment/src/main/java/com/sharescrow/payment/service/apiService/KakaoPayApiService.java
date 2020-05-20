@@ -24,8 +24,7 @@ public class KakaoPayApiService {
 	@Autowired
 	RestTemplate kakaoPayAPIRestTemplate;
 
-	public KakaoPayApiReadyResponse ready(KakaoPayApiReadyRequest kakaoPayApiReadyRequest) throws
-		HttpClientErrorException {
+	public KakaoPayApiReadyResponse ready(KakaoPayApiReadyRequest kakaoPayApiReadyRequest){
 		try {
 			ResponseEntity<KakaoPayApiReadyResponse> response = kakaoPayAPIRestTemplate.postForEntity(
 				KakaoPayURI.READY.getEndPoint(), kakaoPayApiReadyRequest, KakaoPayApiReadyResponse.class);
@@ -37,8 +36,7 @@ public class KakaoPayApiService {
 		}
 	}
 
-	public KakaoPayApiApproveCardResponse approve(KakaoPayApiApproveRequest kakaoPayApiApproveRequest) throws
-		HttpClientErrorException {
+	public KakaoPayApiApproveCardResponse approve(KakaoPayApiApproveRequest kakaoPayApiApproveRequest) {
 		try {
 			ResponseEntity<KakaoPayApiApproveCardResponse> response = kakaoPayAPIRestTemplate.postForEntity(
 				KakaoPayURI.APPROVE.getEndPoint(), kakaoPayApiApproveRequest, KakaoPayApiApproveCardResponse.class);
