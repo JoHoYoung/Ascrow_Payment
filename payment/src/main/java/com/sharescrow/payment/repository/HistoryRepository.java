@@ -11,6 +11,6 @@ public interface HistoryRepository {
 
 	int getConfirmedNumber(@Param("groupId")int groupId);
 
-	History getLatestHistoryByOrderId(@Param("transactionId")int orderId);
+	History getLatestHistoryByOrderId(@Param("orderId")int orderId);
 
 }

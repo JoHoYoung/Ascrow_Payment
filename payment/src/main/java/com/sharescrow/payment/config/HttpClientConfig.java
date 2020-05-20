@@ -14,8 +14,8 @@ public class HttpClientConfig {
 		httpRequestFactory.setConnectTimeout(2000);
 		httpRequestFactory.setReadTimeout(3000);
 		HttpClient httpClient = HttpClientBuilder.create()
-			.setMaxConnTotal(200)
-			.setMaxConnPerRoute(20)
+			.setMaxConnTotal(250)
+			.setMaxConnPerRoute(50)
 			.build();
 		httpRequestFactory.setHttpClient(httpClient);
 		return httpRequestFactory;

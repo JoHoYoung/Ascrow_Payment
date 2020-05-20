@@ -13,6 +13,6 @@
     </select>
 
     <select id="getLatestHistoryByOrderId" resultType="com.sharescrow.payment.model.History">
-        SELECT * FROM (SELECT * FROM History WHERE orderId = #{orderId}) ORDER BY createdAt DESC LIMIT 1;
+        SELECT * FROM (SELECT * FROM History WHERE History.orderId = #{orderId}) as p ORDER BY p.createdAt DESC LIMIT 1;
     </select>
 </mapper>

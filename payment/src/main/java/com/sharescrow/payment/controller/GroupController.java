@@ -32,9 +32,11 @@ public class GroupController {
 
 	@PostMapping("/matched")
 	public ResponseEntity<BaseResponse> groupMatched(@RequestBody GroupMatchedRequest groupMatchedRequest){
+
 		if(Objects.isNull(groupMatchedRequest.getGroupId()) || groupMatchedRequest.getOrderIdList().isEmpty()){
 			throw new InvalidParameterException(ErrorCode.INVALID_REQUEST_PARAM);
 		}
+
 		List<Integer> orderIdList = groupMatchedRequest.getOrderIdList();
 		for(int orderId : orderIdList){
 			// set group id to order scheme

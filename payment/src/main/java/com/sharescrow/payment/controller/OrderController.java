@@ -73,7 +73,7 @@ public class OrderController {
 
 	//------------------------------------- for test ( because we can't actually do payment) -------------------------//
 	@PostMapping("/execute/test")
-	public ResponseEntity<BaseResponse> payTest(@RequestParam("payType") String payType,
+	public ResponseEntity<BaseResponse> payTest(
 		@RequestBody String params) {
 		return new ResponseEntity<>(testPayService.execute(params)
 		, HttpStatus.OK);

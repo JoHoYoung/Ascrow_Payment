@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sharescrow.payment.repository.OrderRepository">
 
-    <select id="selectOrderById">
+    <select id="selectOrderById" resultType="com.sharescrow.payment.model.Order">
         SELECT * FROM `Order` WHERE id = #{id}
     </select>
     <select id="selectOrderByUserId" resultType="com.sharescrow.payment.model.Order">
@@ -22,5 +22,8 @@
     </update>
     <select id="selectOrderByGrouprId">
         SELECT * FROM `Order` WHERE groupId = #{groupId}
+    </select>
+    <select id="selectOrderByTransactionId" resultType="com.sharescrow.payment.model.Transaction">
+        SELECT * FROM `Order` WHERE id = (SELECT orderId from Transaction WHERE id=#{transactionId})
     </select>
 </mapper>

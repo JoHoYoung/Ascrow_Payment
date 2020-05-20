@@ -35,6 +35,8 @@ public class TestPayServiceImpl implements PayService {
 		try {
 			Order order = objectMapper.readValue(params, Order.class);
 			// # TODO product Valid call
+
+			historyService.transactionStart(order);
 			Transaction transaction = new Transaction();
 			transaction.setTransactionKey(UUID.randomUUID().toString());
 			transaction.setTransactionAmount(5000);

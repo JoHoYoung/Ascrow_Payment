@@ -17,7 +17,7 @@ public class JWTAuthServiceImpl implements AuthService {
 
 	public String accessToken(String subject) {
 		Date Now = new Date();
-		Date expireTime = new Date(Now.getTime() + 1000 * 60 * 60 * 24 * 14);
+		Date expireTime = new Date(Now.getTime() + 1000 * 60 * 60 * 1);
 		String jwt = Jwts.builder()
 			.setExpiration(expireTime)
 			.setSubject(subject)
@@ -28,7 +28,7 @@ public class JWTAuthServiceImpl implements AuthService {
 
 	public String refreshToken(String subject) {
 		Date Now = new Date();
-		Date expireTime = new Date(Now.getTime() + 1000 * 60 * 60 * 24 * 365);
+		Date expireTime = new Date(Now.getTime() + 1000 * 60 * 60 * 24 * 2);
 		String jwt = Jwts.builder()
 			.setExpiration(expireTime)
 			.setSubject(subject)
