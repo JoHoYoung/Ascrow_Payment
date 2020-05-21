@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Session {
 
-	@JsonProperty("id")
 	private int id;
 
 }

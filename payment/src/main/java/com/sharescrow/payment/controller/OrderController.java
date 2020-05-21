@@ -3,7 +3,6 @@ package com.sharescrow.payment.controller;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.response.BaseResponse;
 import com.sharescrow.payment.response.DataListResponse;
-import com.sharescrow.payment.response.DataResponse;
 import com.sharescrow.payment.service.HistoryService;
 import com.sharescrow.payment.service.OrderService;
 import com.sharescrow.payment.service.apiService.ProductApiService;
@@ -78,8 +77,7 @@ public class OrderController {
 
 	//------------------------------------- for test ( because we can't actually do payment) -------------------------//
 	@PostMapping("/execute/test")
-	public ResponseEntity<BaseResponse> payTest(
-		@RequestBody String params) {
+	public ResponseEntity<BaseResponse> payTest(@RequestBody String params) {
 		return new ResponseEntity<>(testPayService.execute(params)
 		, HttpStatus.OK);
 	}

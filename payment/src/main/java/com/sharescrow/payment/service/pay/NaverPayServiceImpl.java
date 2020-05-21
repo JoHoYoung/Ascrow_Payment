@@ -129,9 +129,8 @@ public class NaverPayServiceImpl implements PayService {
 				queueApiService.enqueue(order);
 				return new DataResponse<>(200, "success", naverPayApiApproveResponse);
 				// in naverpayapiservice, not 2xx or 2xx But,
-				// before approve api call, resultCode at call back not success
+				// before approve api call, resultCode at callback not success
 				// after approve api call, code is not success
-				// save Snapshot
 			} catch (TransactionFailException e) {
 				// call product for cancel
 				// Async Call
@@ -145,7 +144,7 @@ public class NaverPayServiceImpl implements PayService {
 		}
 	}
 
-	public BaseResponse cancel(String params){
+	public DataResponse cancel(String params){
 		try{
 			Order order = objectMapper.readValue(params, Order.class);
 			Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
@@ -155,7 +154,6 @@ public class NaverPayServiceImpl implements PayService {
 				NaverPayApiCancelRequest naverPayApiCancelRequest = NaverPayApiCancelRequest.builder()
 					.cancelAmount(transaction.getTransactionAmount())
 					.paymentId(transaction.getTransactionKey()).build();
-
 				NaverPayApiCancelResponse naverPayApiCancelResponse = naverPayApiService.cancel(naverPayApiCancelRequest);
 
 				historyService.transactionCancelDone(order);

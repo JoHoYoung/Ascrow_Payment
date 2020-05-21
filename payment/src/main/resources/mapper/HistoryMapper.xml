@@ -12,7 +12,7 @@
         SELECT Count(*) FROM History WHERE id IN (SELECT id FROM `Order` WHERE groupId = #{groupId}) AND stage = "ORDER_CONFIRM";
     </select>
 
-    <select id="getLatestHistoryByOrderId" resultType="com.sharescrow.payment.model.History">
+    <select id="getLatestHistoryByOrderId" resultTypex="com.sharescrow.payment.model.History">
         SELECT * FROM (SELECT * FROM History WHERE History.orderId = #{orderId}) as p ORDER BY p.createdAt DESC LIMIT 1;
     </select>
 </mapper>

@@ -102,7 +102,7 @@ public class OpenbankPayServiceImpl implements PayService {
 		throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
 	}
 
-	public BaseResponse cancel(String params){
+	public DataResponse cancel(String params){
 		try{
 			Order order = objectMapper.readValue(params, Order.class);
 			Transaction transaction = transactionService.getTransactionById(order.getTransactionId());

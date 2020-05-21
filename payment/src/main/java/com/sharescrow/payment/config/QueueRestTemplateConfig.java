@@ -20,7 +20,7 @@ public class QueueRestTemplateConfig {
 		@Autowired HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
 		RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
 		return restTemplateBuilder.rootUri(this.QUEUE_API_URI)
-			.requestFactory(() -> new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory))
+			.requestFactory(() -> httpComponentsClientHttpRequestFactory)
 			.setConnectTimeout(Duration.ofMinutes(3))
 			.build();
 	}

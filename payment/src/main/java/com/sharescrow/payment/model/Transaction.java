@@ -28,7 +28,6 @@ public class Transaction {
 	public void setTemporaryState(){
 		this.state = "T";
 	}
-
 	public void setDoneState(){
 		this.state = "C";
 	}
