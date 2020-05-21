@@ -9,4 +9,6 @@ public interface PayService {
 	DataResponse execute(String params);
 
 	BaseResponse approve(String transactionId, Map<String, String> params);
+
+	DataResponse cancel(String params);
 }

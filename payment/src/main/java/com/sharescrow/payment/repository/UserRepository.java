@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepository {
+
 	List<User> selectUserByProductId(@Param("productId") int productId);
 
 }

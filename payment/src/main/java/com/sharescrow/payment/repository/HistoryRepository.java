@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HistoryRepository {
+
 	void insert(History history);
 
 	int getConfirmedNumber(@Param("groupId")int groupId);

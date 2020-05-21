@@ -49,8 +49,7 @@ public class TransactionController {
 	public ResponseEntity<BaseResponse> groupTransactionStatus(@RequestParam("groupId") int groupId,
 		@RequestParam("numberOfMember") int numberOfmember) {
 		int numberOfConfirmed = historyService.getConfirmedNumber(groupId);
-		boolean result = numberOfConfirmed == numberOfmember;
-		return new ResponseEntity<>(new DataResponse<>(200, "success", result), HttpStatus.OK);
+		return new ResponseEntity<>(new DataResponse<>(200, "success", numberOfConfirmed == numberOfmember), HttpStatus.OK);
 	}
 
 }

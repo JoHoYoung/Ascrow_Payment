@@ -2,13 +2,16 @@ package com.sharescrow.payment.service.pay;
 
 import com.sharescrow.payment.ErrorCode;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiApproveRequest;
+import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiReadyRequest;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiApproveCardResponse;
+import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiReadyResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
 import com.sharescrow.payment.exception.EmptyDataException;
 import com.sharescrow.payment.exception.InvalidOrderRequestException;
 import com.sharescrow.payment.exception.PayReadyException;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.exception.UnSupportedOperationException;
 import com.sharescrow.payment.model.Order;
@@ -25,6 +28,8 @@ import com.sharescrow.payment.service.apiService.uri.KakaoPayURI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +38,8 @@ import java.util.Objects;
 
 @Service
 public class KakaoPayServiceImpl implements PayService {
+
+	private final Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -64,11 +71,10 @@ public class KakaoPayServiceImpl implements PayService {
 				ProductValidResponse productValidResponse = productApiService.isValidOrder(order);
 				Transaction transaction = new Transaction();
 				// save snapshot
-				historyService.transactionStart(order);
 
 				KakaoPayApiReadyRequest kakaoPayApiReadyRequest = KakaoPayApiReadyRequest.builder()
 					.item_name(productValidResponse.getProductName())
-					.total_amount(productValidResponse.getPrice())
+					.total_amount(productValidResponse.getTransAmount())
 					.quantity(order.getQuantitiy())
 					.approval_url(KakaoPayURI.DONE_CALLBACK.getBaseUri()
 						.concat(KakaoPayURI.DONE_CALLBACK.getEndPoint())
@@ -85,7 +91,7 @@ public class KakaoPayServiceImpl implements PayService {
 				// if OK
 				transaction.setPlatform("KAKAO_PAY");
 				transaction.setTransactionKey(kakaoPayApiReadyResponse.getTid());
-				transaction.setTransactionAmount(productValidResponse.getPrice());
+				transaction.setTransactionAmount(productValidResponse.getTransAmount());
 				transaction.setTemporaryState();
 
 				order.setTransactionId(transaction.getId());
@@ -99,6 +105,7 @@ public class KakaoPayServiceImpl implements PayService {
 			} catch (PayReadyException e) {
 				// call product for cancel
 				// Async Call
+				logger.error("Kakao Pay Ready Error order Id : ".concat(Integer.toString(order.getId())));
 				productApiService.cancelOrder(order);
 				throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 				//  if transaction not exist
@@ -136,12 +143,41 @@ public class KakaoPayServiceImpl implements PayService {
 				return new DataResponse(200, "success", kakaoPayApiApproveCardResponse);
 			} catch (TransactionFailException e) {
 				// Async Call
+				logger.error("Kakao Pay Approve Error order Id : ".concat(Integer.toString(order.getId())));
 				productApiService.cancelOrder(order);
 				throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 				// if transaction not exist
 			}
 		} catch (EmptyDataException e) {
 			throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
+		}
+	}
+
+	public DataResponse cancel(String params){
+		try{
+			Order order = objectMapper.readValue(params, Order.class);
+			Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
+			try{
+
+				historyService.transactionCancelStart(order);
+				KakaoPayApiCancelRequest kakaoPayApiCancelRequest = KakaoPayApiCancelRequest.builder()
+					.cancel_amount(transaction.getTransactionAmount())
+					.tid(transaction.getTransactionKey()).build();
+				KakaoPayApiCancelResponse kakaoPayApiCancelResponse = kakaoPayApiService.cancel(kakaoPayApiCancelRequest);
+
+				historyService.transactionCancelDone(order);
+
+				transaction.setDeleted();
+				order.setDeleted();
+				transactionService.update(transaction.getId(), transaction);
+				orderService.updateOrder(order);
+				return new DataResponse(200,"success", kakaoPayApiCancelResponse);
+			}catch (TransactionCancelFailException e){
+				logger.error("Kakao Pay Transaction Cancel Error order Id : ".concat(Integer.toString(order.getId())));
+				throw new  TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
+			}
+		}catch (JsonProcessingException e) {
+			throw new TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
 		}
 	}
 

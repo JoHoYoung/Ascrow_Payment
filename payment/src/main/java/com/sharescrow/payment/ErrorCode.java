@@ -14,7 +14,7 @@ public enum ErrorCode {
 	UNAUTHORIZED_ACCESS(805,"J005","Un Authorized Access"),
 	// Product
 	PRODUCT_INVALID(901, "P001", "User cannot buy product"),
-
+	TRANASACTION_CANCEL_FAIL(902,"P002","Transaction cancel Fail"),
 	UNSUPPORTED_OPERATION(1001, "B001", "Unsupported Operation"),
 	// Date parsing
 	DATE_PARSE_ERROR(1101, "C001", "Date Parse Error"),

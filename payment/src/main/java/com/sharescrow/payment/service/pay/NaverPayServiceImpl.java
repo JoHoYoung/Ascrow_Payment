@@ -1,9 +1,13 @@
 package com.sharescrow.payment.service.pay;
 
 import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.naver.NaverPayApiApproveRequest;
+import com.sharescrow.payment.context.pay.request.naver.NaverPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.naver.NaverPayApiReadyRequest;
+import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiApproveResponse;
+import com.sharescrow.payment.context.pay.response.naver.NaverPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiReadyResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
 import com.sharescrow.payment.exception.*;
@@ -21,6 +25,8 @@ import com.sharescrow.payment.service.apiService.uri.NaverPayURI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +35,8 @@ import java.util.Objects;
 
 @Service
 public class NaverPayServiceImpl implements PayService {
+
+	private final Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
 	OrderService orderService;
@@ -57,7 +65,7 @@ public class NaverPayServiceImpl implements PayService {
 
 			Transaction transaction = new Transaction();
 			transaction.setPlatform("NAVER_PAY");
-			transaction.setTransactionAmount(productValidResponse.getPrice());
+			transaction.setTransactionAmount(productValidResponse.getTransAmount());
 			transaction.setTemporaryState();
 
 			// set callback url not use network
@@ -128,11 +136,40 @@ public class NaverPayServiceImpl implements PayService {
 				// call product for cancel
 				// Async Call
 				productApiService.cancelOrder(order);
+				logger.error("Naver Pay Approve Error order Id : ".concat(Integer.toString(order.getId())));
 				throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 				//  if transaction not exist
 			}
 		} catch (EmptyDataException e) {
 			throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
+		}
+	}
+
+	public BaseResponse cancel(String params){
+		try{
+			Order order = objectMapper.readValue(params, Order.class);
+			Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
+			try{
+
+				historyService.transactionCancelStart(order);
+				NaverPayApiCancelRequest naverPayApiCancelRequest = NaverPayApiCancelRequest.builder()
+					.cancelAmount(transaction.getTransactionAmount())
+					.paymentId(transaction.getTransactionKey()).build();
+
+				NaverPayApiCancelResponse naverPayApiCancelResponse = naverPayApiService.cancel(naverPayApiCancelRequest);
+
+				historyService.transactionCancelDone(order);
+				transaction.setDeleted();
+				order.setDeleted();
+				transactionService.update(transaction.getId(), transaction);
+				orderService.updateOrder(order);
+				return new DataResponse(200,"success", naverPayApiCancelResponse);
+			}catch (TransactionCancelFailException e){
+				logger.error("Naver Pay Transaction Cancel Error order Id : ".concat(Integer.toString(order.getId())));
+				throw new  TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
+			}
+		}catch (JsonProcessingException e) {
+			throw new TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
 		}
 	}
 

@@ -42,7 +42,6 @@ public class TestPayServiceImpl implements PayService {
 			transaction.setTransactionAmount(5000);
 			transaction.setDoneState();
 			order.setTransactionId(transaction.getId());
-
 			order.setCreated();
 			transactionService.creatTransaction(transaction);
 			orderService.createOrder(order);

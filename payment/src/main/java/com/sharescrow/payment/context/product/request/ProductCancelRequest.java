@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductCancelRequest {
-	private int userId;
 	private int productId;
-	private int productOptionId;
 	private int quantity;
 }

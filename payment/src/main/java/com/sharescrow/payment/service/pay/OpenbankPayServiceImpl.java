@@ -1,10 +1,15 @@
 package com.sharescrow.payment.service.pay;
 
 import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.context.pay.request.naver.NaverPayApiCancelRequest;
+import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiRequest;
+import com.sharescrow.payment.context.pay.response.naver.NaverPayApiCancelResponse;
+import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
 import com.sharescrow.payment.exception.InvalidOrderRequestException;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.exception.UnSupportedOperationException;
 import com.sharescrow.payment.model.Order;
@@ -22,6 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +36,8 @@ import java.util.Map;
 
 @Service
 public class OpenbankPayServiceImpl implements PayService {
+
+	private final Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -52,7 +61,6 @@ public class OpenbankPayServiceImpl implements PayService {
 			try {
 				ProductValidResponse productValidResponse = productApiService.isValidOrder(order);
 
-				historyService.transactionStart(order);
 				JsonObject jsonObject = new JsonParser().parse(params).getAsJsonObject();
 
 				OpenBankApiRequest openBankApiRequest = objectMapper.readValue(jsonObject.get("transactionInfo").toString(),
@@ -65,7 +73,7 @@ public class OpenbankPayServiceImpl implements PayService {
 				Transaction transaction = Transaction.builder()
 					.platform("OPEN_BANK")
 					.transactionKey(openBankApiResponse.getApi_tran_id())
-					.transactionAmount(productValidResponse.getPrice()).build();
+					.transactionAmount(productValidResponse.getTransAmount()).build();
 
 				transaction.setDoneState();
 
@@ -94,4 +102,32 @@ public class OpenbankPayServiceImpl implements PayService {
 		throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
 	}
 
+	public BaseResponse cancel(String params){
+		try{
+			Order order = objectMapper.readValue(params, Order.class);
+			Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
+			try{
+				JsonObject jsonObject = new JsonParser().parse(params).getAsJsonObject();
+				historyService.transactionCancelStart(order);
+				OpenBankApiCancelRequest openBankApiCancelRequest = objectMapper.readValue(jsonObject.get("transactionInfo").toString(),
+					OpenBankApiCancelRequest.class);
+
+				OpenBankApiCancelResponse openBankApiCancelResponse = openBankAPIService.cancel(openBankApiCancelRequest);
+
+
+				historyService.transactionCancelDone(order);
+				transaction.setDeleted();
+				order.setDeleted();
+				transactionService.update(transaction.getId(), transaction);
+				orderService.updateOrder(order);
+				return new DataResponse(200,"success", openBankApiCancelResponse);
+
+			}catch (TransactionCancelFailException e){
+				logger.error("OpenBank Transaction Cancel Error order Id : ".concat(Integer.toString(order.getId())));
+				throw new  TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
+			}
+		}catch (JsonProcessingException e) {
+			throw new TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
+		}
+	}
 }

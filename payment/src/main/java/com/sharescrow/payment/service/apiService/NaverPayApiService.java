@@ -7,6 +7,7 @@ import com.sharescrow.payment.context.pay.request.naver.NaverPayApiReadyRequest;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiApproveResponse;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiReadyResponse;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.service.apiService.uri.NaverPayURI;
 
@@ -47,9 +48,18 @@ public class NaverPayApiService {
 	}
 
 	public NaverPayApiCancelResponse cancel(NaverPayApiCancelRequest naverPayApiCancelRequest) {
-		ResponseEntity<NaverPayApiCancelResponse> response = naverPayAPIRestTemplate
-			.postForEntity(NaverPayURI.CANCEL.getEndPoint(), naverPayApiCancelRequest, NaverPayApiCancelResponse.class);
-		return response.getBody();
+		try{
+			ResponseEntity<NaverPayApiCancelResponse> response = naverPayAPIRestTemplate
+				.postForEntity(NaverPayURI.CANCEL.getEndPoint(), naverPayApiCancelRequest, NaverPayApiCancelResponse.class);
+			if (response.getBody().getCode() != "Success") {
+				throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			}
+			return response.getBody();
+		}catch (HttpServerErrorException e) {
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+		} catch (HttpClientErrorException e) {
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+		}
 	}
 
 }

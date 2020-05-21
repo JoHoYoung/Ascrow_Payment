@@ -1,9 +1,15 @@
 package com.sharescrow.payment.context.pay.request.openbank;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Data
 public class OpenBankApiCancelRequest {
 	private String cntr_account_type; // N

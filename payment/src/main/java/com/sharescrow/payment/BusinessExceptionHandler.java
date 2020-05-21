@@ -16,6 +16,7 @@ import com.sharescrow.payment.exception.PayTransactionException;
 import com.sharescrow.payment.exception.ProductInvalidException;
 import com.sharescrow.payment.exception.TokenExpiredException;
 import com.sharescrow.payment.exception.TransactionCancelException;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.exception.UnSupportedOperationException;
 import com.sharescrow.payment.exception.UnauthorizedAccessException;
@@ -133,6 +134,11 @@ public class BusinessExceptionHandler {
 	@ExceptionHandler(InvalidParameterException.class)
 	protected ResponseEntity<ErrorResponse> InvalidParameterExceptionHandler(InvalidParameterException e){
 		return new ResponseEntity<>(new ErrorResponse(e.getErrorCode()), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(TransactionCancelFailException.class)
+	protected ResponseEntity<ErrorResponse> TransactionCancelFailExceptionHandler(TransactionCancelFailException e){
+		return new ResponseEntity<>(new ErrorResponse(e.getErrorCode()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

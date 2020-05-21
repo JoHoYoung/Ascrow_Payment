@@ -1,6 +1,8 @@
 package com.sharescrow.payment.service.apiService;
 
 import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.context.product.request.ProductCancelRequest;
+import com.sharescrow.payment.context.product.request.ProductValidRequest;
 import com.sharescrow.payment.context.product.response.ProductCancelResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
 import com.sharescrow.payment.exception.ProductInvalidException;
@@ -34,7 +36,11 @@ public class ProductApiService {
 
 	public ProductValidResponse isValidOrder(Order order) {
 		try {
-			return productApiRestTemplate.postForObject(ProductURI.VALID.getEndPoint(), order,
+			return productApiRestTemplate.postForObject(ProductURI.VALID.getEndPoint(), ProductValidRequest.builder()
+					.userId(order.getUserId())
+					.productOptionId(order.getProductOptionId())
+					.quantity(order.getQuantitiy())
+					.minShare(order.getMinShare()).build(),
 				ProductValidResponse.class);
 		} catch (HttpServerErrorException e) {
 			logger.error("Product valid api error msg : " + e.getMessage());
@@ -51,8 +57,13 @@ public class ProductApiService {
 		try {
 			// save snapshot "CANCEL_PENDING"
 			historyService.orderCancelStart(order);
+
 			productApiRestTemplate
-				.postForObject(ProductURI.CANCEL.getEndPoint(), order, ProductCancelResponse.class);
+				.postForObject(ProductURI.CANCEL.getEndPoint(),
+					ProductCancelRequest.builder().productId(order.getProductId())
+						.quantity(order.getQuantitiy()).build()
+					, ProductCancelResponse.class);
+
 			// save snapshot "CANCEL_DONE"
 			order.setDeleted();
 			orderService.updateOrder(order);

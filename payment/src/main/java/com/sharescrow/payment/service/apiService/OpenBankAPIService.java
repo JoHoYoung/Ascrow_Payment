@@ -5,6 +5,7 @@ import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiCancelRequ
 import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiRequest;
 import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiResponse;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.service.apiService.uri.OpenBankURI;
 
@@ -42,9 +43,9 @@ public class OpenBankAPIService {
 					OpenBankApiCancelResponse.class);
 			return response.getBody();
 		} catch (HttpServerErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 

@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductValidResponse {
-	private int statusCode;
-	private String statusMsg;
 	private String productName;
-	private int price;
+	private int transAmount;
+	private int quantity;
+	private int maxShareint;
+	private int pyterm;
 }

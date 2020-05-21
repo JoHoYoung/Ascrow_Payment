@@ -8,6 +8,7 @@ import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiApproveCardR
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiReadyResponse;
 import com.sharescrow.payment.exception.PayReadyException;
+import com.sharescrow.payment.exception.TransactionCancelFailException;
 import com.sharescrow.payment.exception.TransactionFailException;
 import com.sharescrow.payment.service.apiService.uri.KakaoPayURI;
 
@@ -49,8 +50,14 @@ public class KakaoPayApiService {
 	}
 
 	public KakaoPayApiCancelResponse cancel(KakaoPayApiCancelRequest kaKaoPayApiCancelRequest) {
-		ResponseEntity<KakaoPayApiCancelResponse> response = kakaoPayAPIRestTemplate.postForEntity(
-			KakaoPayURI.CANCEL.getEndPoint(), kaKaoPayApiCancelRequest, KakaoPayApiCancelResponse.class);
-		return response.getBody();
+		try{
+			ResponseEntity<KakaoPayApiCancelResponse> response = kakaoPayAPIRestTemplate.postForEntity(
+				KakaoPayURI.CANCEL.getEndPoint(), kaKaoPayApiCancelRequest, KakaoPayApiCancelResponse.class);
+			return response.getBody();
+		}catch (HttpServerErrorException e) {
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+		} catch (HttpClientErrorException e) {
+			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+		}
 	}
 }
