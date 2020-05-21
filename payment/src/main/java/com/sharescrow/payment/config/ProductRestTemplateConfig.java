@@ -13,13 +13,13 @@ import java.time.Duration;
 @Configuration
 public class ProductRestTemplateConfig {
 
-	final private String PRODUCT_VALID_API_URI = "http://localhost:8080";
+	final private String PRODUCT_API_URI = "http://localhost:8080";
 
 	@Bean
 	public RestTemplate productApiRestTemplate(
 		@Autowired HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
 		RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-		return restTemplateBuilder.rootUri(this.PRODUCT_VALID_API_URI)
+		return restTemplateBuilder.rootUri(this.PRODUCT_API_URI)
 			.requestFactory(() -> new BufferingClientHttpRequestFactory(httpComponentsClientHttpRequestFactory))
 			.setConnectTimeout(Duration.ofMinutes(3))
 			.build();

@@ -62,6 +62,7 @@ public class OrderController {
 			, HttpStatus.OK);
 	}
 
+	// order cancel, refund
 	@PostMapping("/cancel/{payType}")
 	public ResponseEntity<BaseResponse> cancel(@PathVariable("payType")String payType, @RequestBody String params){
 		return new ResponseEntity<>(payServiceFactory.getPay(payType).cancel(params), HttpStatus.OK);
