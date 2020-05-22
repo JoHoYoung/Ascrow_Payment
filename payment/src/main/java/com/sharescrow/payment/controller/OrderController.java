@@ -49,7 +49,7 @@ public class OrderController {
 	public ResponseEntity<BaseResponse> pay(@RequestParam("payType") String payType,
 		@RequestBody String params) {
 		return new ResponseEntity<>(payServiceFactory.getPay(payType).execute(params),
-			HttpStatus.OK);
+			HttpStatus.CREATED);
 	}
 
 	// transaction callback from naver pay, kakao pay
