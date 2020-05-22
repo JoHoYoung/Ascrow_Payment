@@ -1,5 +1,6 @@
 package com.sharescrow.payment.controller;
 
+import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.model.Order;
@@ -40,14 +41,16 @@ public class TransactionController {
 		Order order = orderService.getOrderByTransactionId(transactionId);
 		Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
 
-		historyService.transactionCancelDone(order);
+		historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
+
 		transaction.setDeleted();
 		order.setDeleted();
+
 		transactionService.update(transaction.getId(), transaction);
 		orderService.updateOrder(order);
 
 		productApiService.cancelOrder(order);
-		return new ResponseEntity<>(new BaseResponse(200,"success"), HttpStatus.OK);
+		return new ResponseEntity<>(new BaseResponse(), HttpStatus.OK);
 	}
 
 	// in kakaopay, when failure call this
@@ -56,14 +59,16 @@ public class TransactionController {
 		Order order = orderService.getOrderByTransactionId(transactionId);
 		Transaction transaction = transactionService.getTransactionById(order.getTransactionId());
 
-		historyService.transactionCancelDone(order);
+		historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
+
 		transaction.setDeleted();
 		order.setDeleted();
+
 		transactionService.update(transaction.getId(), transaction);
 		orderService.updateOrder(order);
 
 		productApiService.cancelOrder(order);
-		return new ResponseEntity<>(new BaseResponse(200,"success"), HttpStatus.OK);
+		return new ResponseEntity<>(new BaseResponse(), HttpStatus.OK);
 	}
 
 	// group's all users confirm order or not

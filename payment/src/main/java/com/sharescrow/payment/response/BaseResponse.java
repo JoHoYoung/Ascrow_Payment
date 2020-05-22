@@ -6,8 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class BaseResponse {
 	private int statusCode;
 	private String statusMsg;
+
+	public BaseResponse(){
+		this.statusCode = 200;
+		this.statusMsg = "success";
+	}
 }

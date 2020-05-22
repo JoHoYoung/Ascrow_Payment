@@ -19,7 +19,7 @@ public class OpenBankApiCancelResponse {
 	private String wd_bank_code_sub; //1230001
 	private String wd_bank_name; //오픈은행
 	private String wd_account_num_masked; //000-1230000-***
-	private String wd_print_content; //출금계좌인자내역
+	private String wd_prInteger_content; //출금계좌인자내역
 	private String wd_account_holder_name; //허균
 	private String res_cnt; //25
 	private List<ReqList> res_list;

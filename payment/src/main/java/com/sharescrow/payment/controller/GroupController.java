@@ -1,6 +1,5 @@
 package com.sharescrow.payment.controller;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.group.request.GroupMatchedRequest;
 import com.sharescrow.payment.exception.EmptyDataException;
 import com.sharescrow.payment.exception.InvalidParameterException;
-import com.sharescrow.payment.model.Order;
+import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.response.BaseResponse;
 import com.sharescrow.payment.service.HistoryService;
 import com.sharescrow.payment.service.OrderService;
@@ -34,33 +34,21 @@ public class GroupController {
 
 	@PostMapping("/matched")
 	@Transactional(rollbackFor = {EmptyDataException.class})
-	public ResponseEntity<BaseResponse> groupMatched(@RequestBody GroupMatchedRequest groupMatchedRequest){
-
-		if(Objects.isNull(groupMatchedRequest.getGroupId()) || groupMatchedRequest.getOrderIdList().isEmpty()){
+	public ResponseEntity<BaseResponse> groupMatched(@RequestBody GroupMatchedRequest groupMatchedRequest) {
+		if (Objects.isNull(groupMatchedRequest.getGroupId()) || Objects.isNull(groupMatchedRequest.getOrderIdList())
+			|| groupMatchedRequest.getOrderIdList().isEmpty()) {
 			throw new InvalidParameterException(ErrorCode.INVALID_REQUEST_PARAM);
 		}
+		historyService.saveMultipleHisotry(groupMatchedRequest.getOrderIdList(), HistoryStage.GET_GOODS);
+		orderService.updateWhenGroupMatched(groupMatchedRequest.getOrderIdList(), groupMatchedRequest.getGroupId(), DataState.MATCHED);
+		return new ResponseEntity<>(new BaseResponse(), HttpStatus.OK);
 
-		List<Integer> orderIdList = groupMatchedRequest.getOrderIdList();
-		for(int orderId : orderIdList){
-			// set group id to order scheme
-			// save history GET_GOODS_PENDING -> GET_GOODS
-			Order order = orderService.getOrderById(orderId);
-			order.setGroupId(groupMatchedRequest.getGroupId());
-			order.setMatched();
-			orderService.updateOrder(order);
-			historyService.getGoods(order);
-		}
-		return new ResponseEntity<>(new BaseResponse(200,"success"), HttpStatus.OK);
 	}
 
 	@GetMapping("/expired")
-	public ResponseEntity<BaseResponse> groupExpired(@RequestParam("groupId")int groupId){
-		List<Order> orderList = orderService.getOrdersByGroupId(groupId);
-		for(Order order : orderList){
-			order.setExpired();
-			orderService.updateOrder(order);
-		}
-		return new ResponseEntity<>(new BaseResponse(200,"success"), HttpStatus.OK);
+	public ResponseEntity<BaseResponse> groupExpired(@RequestParam("groupId") int groupId) {
+		orderService.updateWhenGroupExpired(groupId);
+		return new ResponseEntity<>(new BaseResponse(), HttpStatus.OK);
 	}
 
 }

@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GroupMatchedRequest {
-	private int groupId;
+	private Integer groupId;
 	private List<Integer> orderIdList;
 }

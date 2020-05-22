@@ -1,5 +1,6 @@
 package com.sharescrow.payment.service.apiService;
 
+import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.queue.response.EnqueueResponse;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.service.HistoryService;
@@ -30,7 +31,7 @@ public class QueueApiService {
 	public void enqueue(Order order) {
 		try {
 			queueAPIRestTemplate.postForObject(QueueURI.ENQUEUE.getEndPoint(), order, EnqueueResponse.class);
-			historyService.getGoodsPending(order);
+			historyService.saveHistory(order, HistoryStage.GET_GOODS_PENDING);
 			// #Todo : if enque is fails, save to messaging queue for retry(not on this proejct but conceptually..)
 		} catch (HttpServerErrorException e) {
 			logger.error("Enqueue api error msg : " + e.getMessage());

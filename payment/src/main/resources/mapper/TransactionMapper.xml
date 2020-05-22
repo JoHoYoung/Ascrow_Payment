@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sharescrow.payment.repository.TransactionRepository">
 
-    <select id = "selectOrderById">
-        SELECT `Order` WHERE id = #{id}
+    <select id = "selectById">
+        SELECT Transaction WHERE id = #{id}
     </select>
     <select id="update" parameterType="map">
         UPDATE SET state = #{transaction.state}, platform =#{transaction.platform} , transactionKey = #{transaction.transactionKey},

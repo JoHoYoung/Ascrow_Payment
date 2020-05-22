@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductValidRequest {
-	private int userId;
-	private int productOptionId;
-	private int quantity;
-	private int minShare;
+	private Integer userId;
+	private Integer productOptionId;
+	private Integer quantity;
+	private Integer minShare;
 }

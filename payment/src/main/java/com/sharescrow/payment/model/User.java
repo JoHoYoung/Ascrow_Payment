@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -12,8 +13,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-	private int id;
+	private Integer id;
 	private String name;
+	@Setter
+	private DataState state;
 	@Builder.Default
 	private Date createdAt = new Date();
 	@Builder.Default

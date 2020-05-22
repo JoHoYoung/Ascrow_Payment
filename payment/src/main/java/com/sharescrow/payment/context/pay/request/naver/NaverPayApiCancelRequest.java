@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NaverPayApiCancelRequest {
 	private String paymentId; //{결제 완료 시 전달된 paymentId} \
-	private int cancelAmount; //{취소금액} \
+	private Integer cancelAmount; //{취소금액} \
 	private String cancelReason; //testCancel \
 	private String cancelRequester; //2
 }

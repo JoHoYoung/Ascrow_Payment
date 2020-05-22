@@ -1,12 +1,14 @@
 package com.sharescrow.payment.service.apiService;
 
 import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.product.request.ProductCancelRequest;
 import com.sharescrow.payment.context.product.request.ProductValidRequest;
 import com.sharescrow.payment.context.product.response.ProductCancelResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
 import com.sharescrow.payment.exception.ProductInvalidException;
 import com.sharescrow.payment.exception.TransactionFailException;
+import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.service.HistoryService;
 import com.sharescrow.payment.service.OrderService;
@@ -56,7 +58,7 @@ public class ProductApiService {
 	public void cancelOrder(Order order) {
 		try {
 			// save snapshot "CANCEL_PENDING"
-			historyService.orderCancelStart(order);
+			historyService.saveHistory(order, HistoryStage.ORDER_CANCEL_PENDING);
 
 			productApiRestTemplate
 				.postForObject(ProductURI.CANCEL.getEndPoint(),
@@ -65,9 +67,9 @@ public class ProductApiService {
 					, ProductCancelResponse.class);
 
 			// save snapshot "CANCEL_DONE"
-			order.setDeleted();
+			order.setState(DataState.DELETED);
 			orderService.updateOrder(order);
-			historyService.orderCancelDone(order);
+			historyService.saveHistory(order, HistoryStage.ORDER_CANCEL_DONE);
 			// #Todo : if product cancel fails, save to message queue or do batch job for retry(conceptual)
 		} catch (HttpServerErrorException e) {
 			logger.error("Product cancel api error msg : " + e.getMessage());

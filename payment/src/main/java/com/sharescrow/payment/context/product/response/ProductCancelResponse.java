@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductCancelResponse {
-	private int statusCode;
+	private Integer statusCode;
 	private String statusMsg;
 }

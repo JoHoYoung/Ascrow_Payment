@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductValidResponse {
 	private String productName;
-	private int transAmount;
-	private int quantity;
-	private int maxShareint;
-	private int pyterm;
+	private Integer transAmount;
+	private Integer quantity;
+	private Integer maxShareInteger;
+	private Integer pyterm;
 }

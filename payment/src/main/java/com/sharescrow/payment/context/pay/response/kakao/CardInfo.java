@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardInfo {
-	private String interest_free_install; //N
+	private String Integererest_free_install; //N
 	private String bin; //621640
 	private String card_type; //체크
 	private String card_mid; //123456789

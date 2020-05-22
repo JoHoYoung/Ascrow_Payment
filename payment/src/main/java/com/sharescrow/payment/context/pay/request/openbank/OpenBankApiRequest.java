@@ -10,9 +10,9 @@ public class OpenBankApiRequest {
 	private String bank_tran_id; //F123456789U4BC34239Z
 	private String cntr_account_type; //N
 	private String cntr_account_num; //00012345678901234
-	private String dps_print_content; //쇼핑몰환불
-	private String fintech_use_num; //123456789012345678901234
-	private String wd_print_content; //오픈뱅킹출금
+	private String dps_prInteger_content; //쇼핑몰환불
+	private String fIntegerech_use_num; //123456789012345678901234
+	private String wd_prInteger_content; //오픈뱅킹출금
 	private String tran_amt; //10000
 	private String tran_dtime; //20190910101921
 	private String req_client_name; //홍길동

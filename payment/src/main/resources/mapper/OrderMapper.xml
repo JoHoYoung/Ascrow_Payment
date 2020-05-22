@@ -24,6 +24,18 @@
         SELECT * FROM `Order` WHERE groupId = #{groupId}
     </select>
     <select id="selectOrderByTransactionId" resultType="com.sharescrow.payment.model.Transaction">
-        SELECT * FROM `Order` WHERE id = (SELECT orderId from Transaction WHERE id=#{transactionId})
+      SELECT `Order`.* FROM `Order` JOIN Transaction ON `Order`.id = Transaction.orderId WHERE Transcation.id = #{transactionId}
     </select>
+
+    <update id="updateWhenGroupMatched" parameterType="java.util.HashMap">
+        UPDATE `Order` SET groupId = #{groupId}, state = #{dataState}
+        WHERE id IN
+        <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+            #{orderId}
+        </foreach>
+    </update>
+
+    <update id="updateWhenGroupExpired" parameterType="java.util.HashMap">
+        UPDATE `Order` SET state = #{datastate} WHERE groupId = #{groupId}
+    </update>
 </mapper>

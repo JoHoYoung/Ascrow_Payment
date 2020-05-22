@@ -18,7 +18,7 @@ public class KakaoPayApiCancelResponse {
 	private String partner_user_id; //partner_user_id
 	private String payment_method_type; //MONEY
 	private String item_name; //초코파이
-	private int quantityprivate; //1
+	private Integer quantityprivate; //1
 	private Amount amount;
 	private Amount canceled_amount;
 	private Amount cancel_available_amount;

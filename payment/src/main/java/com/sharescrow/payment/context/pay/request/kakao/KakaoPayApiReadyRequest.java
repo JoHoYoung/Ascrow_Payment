@@ -14,11 +14,12 @@ public class KakaoPayApiReadyRequest {
 	private String partner_order_id; //partner_order_id' \
 	private String partner_user_id; //partner_user_id'
 	private String item_name; //초코파이' \
-	private int quantity; //1' \
-	private int total_amount; //2200' \
-	private int vat_amount; //200' \
-	private int tax_free_amount; //0' \
+	private Integer quantity; //1' \
+	private Integer total_amount; //2200' \
+	private Integer vat_amount; //200' \
+	private Integer tax_free_amount; //0' \
 	private String approval_url; //https://developers.kakao.com/success' \
 	private String fail_url; //https://developers.kakao.com/fail' \
 	private String cancel_url; //https://developers.kakao.com/cancel'
+
 }

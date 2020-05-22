@@ -15,7 +15,7 @@ public class ApproveDetail {
 	private String admissionYmdt; // 20170201151722
 	private String payHistId; // 20170201NP1043587781
 	private String primaryPayAmount; // 1000,
-	private String npointPayAmount; // 0,
+	private String npoIntegerPayAmount; // 0,
 	private String totalPayAmount; // 1000,
 	private String primaryPayMeans; // CARD
 	private String merchantPayKey; // order-key

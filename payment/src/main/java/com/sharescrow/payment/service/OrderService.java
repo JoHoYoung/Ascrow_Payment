@@ -2,13 +2,16 @@ package com.sharescrow.payment.service;
 
 import com.sharescrow.payment.ErrorCode;
 import com.sharescrow.payment.exception.EmptyDataException;
+import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.repository.OrderRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -49,9 +52,28 @@ public class OrderService {
 		return order;
 	}
 
+
 	public void createOrder(Order order) {
 		orderRepository.insert(order);
 	}
 
-	public void updateOrder(Order order){orderRepository.update(order);}
+	public void updateOrder(Order order) {
+		orderRepository.update(order);
+	}
+
+	public void updateWhenGroupMatched(List<Integer> orderIds, int groupId, DataState dataState){
+		HashMap<String, Object> params = new HashMap();
+		params.put("groupId",groupId);
+		params.put("dataState", dataState);
+		params.put("orderIds", orderIds);
+		orderRepository.updateWhenGroupMatched(params);
+	}
+
+	public void updateWhenGroupExpired(int groupId){
+		HashMap<String, Object> params = new HashMap();
+		params.put("groupId",groupId);
+		params.put("dataState", DataState.EXPIRED);
+		orderRepository.updateWhenGroupExpired(params);
+	}
+
 }

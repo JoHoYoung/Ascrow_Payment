@@ -9,7 +9,7 @@ public class ReqList {
 	private String bank_code_std; /// 097
 	private String account_num; /// 1101230000678
 	private String account_hloder_name; /// 홍길동
-	private String print_content; /// 쇼핑몰환불
+	private String prInteger_content; /// 쇼핑몰환불
 	private String tran_amt; /// 10000
 	private String req_client_name; /// 홍길동
 	private String req_client_bank_code; /// 097

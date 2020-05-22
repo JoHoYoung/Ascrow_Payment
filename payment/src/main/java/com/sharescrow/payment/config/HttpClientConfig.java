@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 @Configuration
 public class HttpClientConfig {
+
 	@Bean
 	public HttpComponentsClientHttpRequestFactory gethttpComponentsClientHttpRequestFactory() {
 		HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -20,4 +21,5 @@ public class HttpClientConfig {
 		httpRequestFactory.setHttpClient(httpClient);
 		return httpRequestFactory;
 	}
+
 }

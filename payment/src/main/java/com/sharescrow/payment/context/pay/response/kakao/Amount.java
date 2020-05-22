@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Amount {
-	private int total; // 3200,
-	private int tax_free; // 0,
-	private int vat; // 0,
-	private int discount; // 0,
-	private int point; // 0
+	private Integer total; // 3200,
+	private Integer tax_free; // 0,
+	private Integer vat; // 0,
+	private Integer discount; // 0,
+	private Integer poInteger; // 0
 }

@@ -3,16 +3,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sharescrow.payment.repository.HistoryRepository">
-    <select id = "insert">
+    <select id="insert">
         INSERT INTO History(id, orderId, stage, createdAt, updatedAt)
         VALUES (#{id}, #{orderId}, #{stage}, #{createdAt}, #{updatedAt})
     </select>
 
-    <select id ="getConfirmedNumber" resultType="int">
-        SELECT Count(*) FROM History WHERE id IN (SELECT id FROM `Order` WHERE groupId = #{groupId}) AND stage = "ORDER_CONFIRM";
+    <select id="getConfirmedNumber" resultType="int">
+      SELECT count(*)
+      FROM History
+      JOIN `Order` ON History.orderId = `Order`.id
+      WHERE
+      History.stage="ORDER_CONFIRM"
+      AND `Order`.groupId =#{groupId};
     </select>
 
-    <select id="getLatestHistoryByOrderId" resultTypex="com.sharescrow.payment.model.History">
-        SELECT * FROM (SELECT * FROM History WHERE History.orderId = #{orderId}) as p ORDER BY p.createdAt DESC LIMIT 1;
+    <select id="getLatestHistoryByOrderId" resultType="com.sharescrow.payment.model.History">
+      SELECT * FROM History WHERE orderId = #{orderId} ORDER BY createdAt desc limit 1
     </select>
 </mapper>
