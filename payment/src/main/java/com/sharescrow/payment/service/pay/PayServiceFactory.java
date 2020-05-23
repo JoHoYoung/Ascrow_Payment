@@ -1,7 +1,7 @@
 package com.sharescrow.payment.service.pay;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.InvalidPayTypeException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ public class PayServiceFactory {
 		try {
 			return PayType.valueOf(payTypeString).getPayService();
 		} catch (IllegalArgumentException e) {
-			throw new InvalidPayTypeException(ErrorCode.INVALID_PAYREQUEST_TYPE);
+			throw new BusinessException(ErrorCode.INVALID_PAYREQUEST_TYPE);
 		}
 	}
 }

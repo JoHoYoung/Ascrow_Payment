@@ -1,8 +1,7 @@
 package com.sharescrow.payment.service.auth;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.InvalidTokenException;
-import com.sharescrow.payment.exception.TokenExpiredException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 import io.jsonwebtoken.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -41,9 +40,9 @@ public class JWTAuthServiceImpl implements AuthService {
 		try {
 			Jwts.parser().setSigningKey(SALT).parseClaimsJws(token).getBody();
 		} catch (ExpiredJwtException e) {
-			throw new TokenExpiredException(ErrorCode.JWT_TOKEN_EXPIRED);
+			throw new BusinessException(ErrorCode.JWT_TOKEN_EXPIRED);
 		} catch (JwtException e) {
-			throw new InvalidTokenException(ErrorCode.INVALID_TOKEN);
+			throw new BusinessException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 

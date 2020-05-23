@@ -1,10 +1,8 @@
 package com.sharescrow.payment.service.auth;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.Session;
-import com.sharescrow.payment.exception.DecodedTokenParseException;
-import com.sharescrow.payment.exception.InvalidTokenException;
-import com.sharescrow.payment.exception.UnauthorizedAccessException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ public class HandlerInterceptorAdapterImpl extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) {
 		try {
 			if (req.getHeader("Authorization") == null) {
-				throw new InvalidTokenException(ErrorCode.EMPTY_TOKEN);
+				throw new BusinessException(ErrorCode.EMPTY_TOKEN);
 			}
 			String[] authHeader = req.getHeader("Authorization").split(" ");
 			String token = authHeader[1];
@@ -37,9 +35,9 @@ public class HandlerInterceptorAdapterImpl extends HandlerInterceptorAdapter {
 			req.setAttribute("session", session);
 			return true;
 		} catch (IOException e) {
-			throw new DecodedTokenParseException(ErrorCode.DECODED_TOKEN_PARSE_ERROR);
+			throw new BusinessException(ErrorCode.DECODED_TOKEN_PARSE_ERROR);
 		} catch (IndexOutOfBoundsException e){
-			throw new UnauthorizedAccessException(ErrorCode.UNAUTHORIZED_ACCESS);
+			throw new BusinessException(ErrorCode.UNAUTHORIZED_ACCESS);
 		}
 	}
 }
