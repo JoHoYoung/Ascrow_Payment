@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.group.request.GroupMatchedRequest;
-import com.sharescrow.payment.exception.EmptyDataException;
-import com.sharescrow.payment.exception.InvalidParameterException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.response.BaseResponse;
 import com.sharescrow.payment.service.HistoryService;
 import com.sharescrow.payment.service.OrderService;
+import com.sharescrow.payment.util.Util;
 
 @RestController
 @RequestMapping("/api/v1/group")
@@ -33,16 +33,14 @@ public class GroupController {
 	HistoryService historyService;
 
 	@PostMapping("/matched")
-	@Transactional(rollbackFor = {EmptyDataException.class})
+	@Transactional(rollbackFor = {BusinessException.class})
 	public ResponseEntity<BaseResponse> groupMatched(@RequestBody GroupMatchedRequest groupMatchedRequest) {
-		if (Objects.isNull(groupMatchedRequest.getGroupId()) || Objects.isNull(groupMatchedRequest.getOrderIdList())
-			|| groupMatchedRequest.getOrderIdList().isEmpty()) {
-			throw new InvalidParameterException(ErrorCode.INVALID_REQUEST_PARAM);
+		if (Objects.isNull(groupMatchedRequest.getGroupId()) || Util.collectionEmpty(groupMatchedRequest.getOrderIdList())) {
+			throw new BusinessException(ErrorCode.INVALID_REQUEST_PARAM);
 		}
 		historyService.saveMultipleHisotry(groupMatchedRequest.getOrderIdList(), HistoryStage.GET_GOODS);
 		orderService.updateWhenGroupMatched(groupMatchedRequest.getOrderIdList(), groupMatchedRequest.getGroupId(), DataState.MATCHED);
 		return new ResponseEntity<>(new BaseResponse(), HttpStatus.OK);
-
 	}
 
 	@GetMapping("/expired")
