@@ -100,7 +100,6 @@ public class KakaoPayServiceImpl
 		TransactionStatus txStatus =
 			dataSourceTransactionManager.getTransaction(new DefaultTransactionDefinition());
 		try {
-			dataSourceTransactionManager.rollback(txStatus);
 			KakaoPayApiCancelResponse kakaoPayApiCancelResponse = kakaoPayApiService.cancel(order, transaction);
 			historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
 			return kakaoPayApiCancelResponse;
