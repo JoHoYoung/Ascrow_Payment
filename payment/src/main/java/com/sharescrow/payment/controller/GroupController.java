@@ -33,9 +33,9 @@ public class GroupController {
 	HistoryService historyService;
 
 	@PostMapping("/matched")
-	@Transactional(rollbackFor = {BusinessException.class})
+	@Transactional
 	public ResponseEntity<BaseResponse> groupMatched(@RequestBody GroupMatchedRequest groupMatchedRequest) {
-		if (Objects.isNull(groupMatchedRequest.getGroupId()) || Util.collectionEmpty(groupMatchedRequest.getOrderIdList())) {
+		if (Objects.isNull(groupMatchedRequest.getGroupId()) || Util.isCollectionEmpty(groupMatchedRequest.getOrderIdList())) {
 			throw new BusinessException(ErrorCode.INVALID_REQUEST_PARAM);
 		}
 		historyService.saveMultipleHisotry(groupMatchedRequest.getOrderIdList(), HistoryStage.GET_GOODS);

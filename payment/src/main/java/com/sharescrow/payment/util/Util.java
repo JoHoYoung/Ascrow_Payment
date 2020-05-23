@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Util {
 
-	public static boolean collectionEmpty(Collection collection){
+	public static boolean isCollectionEmpty(Collection collection){
 		return Objects.isNull(collection) || collection.isEmpty();
 	}
 

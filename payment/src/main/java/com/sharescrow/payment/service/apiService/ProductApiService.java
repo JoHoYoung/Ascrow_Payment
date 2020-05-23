@@ -49,6 +49,9 @@ public class ProductApiService {
 		} catch (HttpClientErrorException e) {
 			logger.error("Product valid api error msg : " + e.getMessage());
 			throw new BusinessException(ErrorCode.PRODUCT_INVALID);
+		} catch(Exception e){
+			logger.error("Product valid api error msg : " + e.getMessage());
+			throw new BusinessException(ErrorCode.PRODUCT_INVALID);
 		}
 	}
 
@@ -73,6 +76,8 @@ public class ProductApiService {
 		} catch (HttpServerErrorException e) {
 			logger.error("Product cancel api error msg : " + e.getMessage());
 		} catch (HttpClientErrorException e) {
+			logger.error("Product cancel api error msg : " + e.getMessage());
+		} catch (Exception e){
 			logger.error("Product cancel api error msg : " + e.getMessage());
 		}
 	}
