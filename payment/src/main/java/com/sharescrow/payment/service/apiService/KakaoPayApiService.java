@@ -69,7 +69,6 @@ public class KakaoPayApiService {
 			transaction.setTransactionAmount(productValidResponse.getTransAmount());
 			transaction.setState(DataState.TEMPORARY);
 
-
 			order.setTransactionId(transaction.getId());
 			order.setState(DataState.CREATED);
 			// save data
