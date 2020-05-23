@@ -1,6 +1,6 @@
 package com.sharescrow.payment.response;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import lombok.Data;
 
 @Data
