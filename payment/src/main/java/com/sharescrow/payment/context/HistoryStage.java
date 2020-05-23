@@ -1,6 +1,6 @@
 package com.sharescrow.payment.context;
 
-import com.sharescrow.payment.service.HistoryService;
+import lombok.Getter;
 
 public enum HistoryStage {
 	ORDER_START("ORDER_START", "when user come in and transcation start(not done)"),
@@ -19,19 +19,14 @@ public enum HistoryStage {
 	// last stage
 	ORDER_CONFIRM("ORDER_CONFIRM", "an order is confirmed by user(or automatically and platfrom get money");
 
+	@Getter
 	private String stage;
+	@Getter
 	private String descripion;
 
 	HistoryStage(String stage, String description) {
 		this.stage = stage;
 		this.descripion = description;
-	}
-
-	public String getStage() {
-		return this.stage;
-	}
-	public String getDescripion() {
-		return this.descripion;
 	}
 
 }
