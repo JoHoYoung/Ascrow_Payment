@@ -1,7 +1,7 @@
 package com.sharescrow.payment.util;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.DateParseException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -38,7 +38,7 @@ public class DateUtil {
 			SimpleDateFormat transFormat = new SimpleDateFormat(format);
 			return transFormat.parse(time);
 		} catch (ParseException e) {
-			throw new DateParseException(ErrorCode.DATE_PARSE_ERROR);
+			throw new BusinessException(ErrorCode.DATE_PARSE_ERROR);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class DateUtil {
 			SimpleDateFormat transFormat = new SimpleDateFormat(DateUtil.baseForamt);
 			return transFormat.parse(time);
 		} catch (ParseException e) {
-			throw new DateParseException(ErrorCode.DATE_PARSE_ERROR);
+			throw new BusinessException(ErrorCode.DATE_PARSE_ERROR);
 		}
 	}
 }
