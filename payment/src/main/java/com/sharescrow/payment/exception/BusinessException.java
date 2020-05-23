@@ -1,11 +1,11 @@
 package com.sharescrow.payment.exception;
 
-import com.sharescrow.payment.ErrorCode;
 import com.sharescrow.payment.util.DateUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
-public abstract class BusinessException extends RuntimeException {
+public class BusinessException extends RuntimeException {
 	private ErrorCode errorCode;
 	private StringBuilder stringBuilder = new StringBuilder();
 
@@ -24,8 +24,8 @@ public abstract class BusinessException extends RuntimeException {
 		return this.errorCode.getStatus();
 	}
 
-	public String getStatusCode() {
-		return this.errorCode.getStatusCode();
+	public HttpStatus getStatusCode() {
+		return this.errorCode.getHttpStatusCode();
 	}
 
 	public String getStatusMsg() {
