@@ -3,25 +3,7 @@ package com.sharescrow.payment;
 import javax.servlet.http.HttpServletRequest;
 
 import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
-import com.sharescrow.payment.exception.BusinessException;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.response.ErrorResponse;
 import com.sharescrow.payment.util.Util;
 
@@ -53,6 +35,11 @@ public class BusinessExceptionHandler {
 			.append(Util.extractPostRequestBody(request));
 		logger.error(errLog.toString());
 		return new ResponseEntity<>(new ErrorResponse(e.getErrorCode()), e.getStatusCode());
+	}
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	protected ResponseEntity<ErrorResponse> MissingServletRequestParameterExceptionHandler(MissingServletRequestParameterException e){
+		return new ResponseEntity<>(new ErrorResponse(ErrorCode.INVALID_REQUEST_PARAM), HttpStatus.BAD_REQUEST);
 	}
 }
 
