@@ -1,7 +1,7 @@
 package com.sharescrow.payment.service;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.EmptyDataException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.Transaction;
 import com.sharescrow.payment.repository.TransactionRepository;
 
@@ -23,7 +23,7 @@ public class TransactionService {
 	public Transaction getTransactionById(String id) {
 		Transaction transaction = transactionRepository.selectById(id);
 		if (Objects.isNull(transaction)) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return transaction;
 	}

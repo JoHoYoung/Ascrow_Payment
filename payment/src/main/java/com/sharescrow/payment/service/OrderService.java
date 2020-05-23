@@ -1,7 +1,7 @@
 package com.sharescrow.payment.service;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.EmptyDataException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.repository.OrderRepository;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -23,7 +22,7 @@ public class OrderService {
 	public Order getOrderById(int orderId) {
 		Order order = orderRepository.selectOrderById(orderId);
 		if (Objects.isNull(order)) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return order;
 	}
@@ -31,7 +30,7 @@ public class OrderService {
 	public List<Order> getOrdersByUserId(int userId) {
 		List<Order> orderList = orderRepository.selectOrderByUserId(userId);
 		if (orderList.isEmpty()) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return orderList;
 	}
@@ -39,7 +38,7 @@ public class OrderService {
 	public List<Order> getOrdersByGroupId(int groupId) {
 		List<Order> orderList = orderRepository.selectOrderByGrouprId(groupId);
 		if (orderList.isEmpty()) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return orderList;
 	}
@@ -47,7 +46,7 @@ public class OrderService {
 	public Order getOrderByTransactionId(String transactionId) {
 		Order order = orderRepository.selectOrderByTransactionId(transactionId);
 		if (Objects.isNull(order)) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return order;
 	}

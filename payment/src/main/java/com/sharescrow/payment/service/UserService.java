@@ -1,7 +1,7 @@
 package com.sharescrow.payment.service;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.exception.EmptyDataException;
+import com.sharescrow.payment.exception.ErrorCode;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.User;
 import com.sharescrow.payment.repository.UserRepository;
 
@@ -19,7 +19,7 @@ public class UserService {
 	public List<User> getUsersByProductId(int productId) {
 		List<User> userList = userRepository.selectUserByProductId(productId);
 		if (userList.isEmpty()) {
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return userList;
 	}

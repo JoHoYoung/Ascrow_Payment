@@ -3,11 +3,9 @@ package com.sharescrow.payment.service;
 import java.util.List;
 import java.util.Objects;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.HistoryStage;
-import com.sharescrow.payment.exception.EmptyDataException;
-import com.sharescrow.payment.exception.UnSupportedOperationException;
-import com.sharescrow.payment.exception.UnauthorizedAccessException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.History;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.repository.HistoryRepository;
@@ -29,7 +27,7 @@ public class HistoryService {
 	public History getLastestHistoryByOrderId(int orderId){
 		History history = historyRepository.getLatestHistoryByOrderId(orderId);
 		if(Objects.isNull(history)){
-			throw new EmptyDataException(ErrorCode.EMPTY_DATA_SET);
+			throw new BusinessException(ErrorCode.EMPTY_DATA_SET);
 		}
 		return history;
 	}
@@ -39,7 +37,7 @@ public class HistoryService {
 		if(historyStage.equals(HistoryStage.ORDER_CONFIRM)){
 			History history = this.getLastestHistoryByOrderId(order.getId());
 			if(!history.getStage().equals(HistoryStage.GET_GOODS)){
-				throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
+				throw new BusinessException(ErrorCode.UNSUPPORTED_OPERATION);
 			}
 		}
 		this.historyRepository.insert(History.builder().orderId(order.getId())
