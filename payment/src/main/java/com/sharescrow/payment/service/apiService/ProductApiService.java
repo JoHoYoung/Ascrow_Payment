@@ -1,13 +1,12 @@
 package com.sharescrow.payment.service.apiService;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.product.request.ProductCancelRequest;
 import com.sharescrow.payment.context.product.request.ProductValidRequest;
 import com.sharescrow.payment.context.product.response.ProductCancelResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
-import com.sharescrow.payment.exception.ProductInvalidException;
-import com.sharescrow.payment.exception.TransactionFailException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.service.HistoryService;
@@ -46,10 +45,10 @@ public class ProductApiService {
 				ProductValidResponse.class);
 		} catch (HttpServerErrorException e) {
 			logger.error("Product valid api error msg : " + e.getMessage());
-			throw new ProductInvalidException(ErrorCode.PRODUCT_INVALID);
+			throw new BusinessException(ErrorCode.PRODUCT_INVALID);
 		} catch (HttpClientErrorException e) {
 			logger.error("Product valid api error msg : " + e.getMessage());
-			throw new ProductInvalidException(ErrorCode.PRODUCT_INVALID);
+			throw new BusinessException(ErrorCode.PRODUCT_INVALID);
 		}
 	}
 

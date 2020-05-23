@@ -1,7 +1,6 @@
 package com.sharescrow.payment.service.apiService;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.context.HistoryStage;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiApproveRequest;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.kakao.KakaoPayApiReadyRequest;
@@ -9,9 +8,7 @@ import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiApproveCardR
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiReadyResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
-import com.sharescrow.payment.exception.PayReadyException;
-import com.sharescrow.payment.exception.TransactionCancelFailException;
-import com.sharescrow.payment.exception.TransactionFailException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.model.Transaction;
@@ -64,7 +61,7 @@ public class KakaoPayApiService {
 				.fail_url(KakaoPayURI.FAIL_CALLBACK.getBaseUri()
 					.concat(KakaoPayURI.DONE_CALLBACK.getEndPoint())
 					.concat(transaction.getId())).build();
-			// PayReadyException Point
+			// BusinessException Point
 			KakaoPayApiReadyResponse kakaoPayApiReadyResponse = this.callReadyApi(kakaoPayApiReadyRequest);
 			// if OK
 			transaction.setPlatform("KAKAO_PAY");
@@ -81,9 +78,9 @@ public class KakaoPayApiService {
 			orderService.createOrder(order);
 			return kakaoPayApiReadyResponse;
 		} catch (HttpServerErrorException e) {
-			throw new PayReadyException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new PayReadyException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
@@ -101,7 +98,7 @@ public class KakaoPayApiService {
 				.tid(transaction.getTransactionKey())
 				.pg_token(pg_token).build();
 
-			// TransactionFailException Point
+			// BusinessException Point
 			KakaoPayApiApproveCardResponse kakaoPayApiApproveCardResponse = this.callApproveApi(kakaoPayApiApproveRequest);
 
 			transaction.setState(DataState.CREATED);
@@ -109,9 +106,9 @@ public class KakaoPayApiService {
 			transactionService.update(order.getTransactionId(), transaction);
 			return kakaoPayApiApproveCardResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
@@ -136,9 +133,9 @@ public class KakaoPayApiService {
 			orderService.updateOrder(order);
 			return kakaoPayApiCancelResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 }

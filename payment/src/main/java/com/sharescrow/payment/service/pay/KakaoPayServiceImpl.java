@@ -1,15 +1,11 @@
 package com.sharescrow.payment.service.pay;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.HistoryStage;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiApproveCardResponse;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.kakao.KakaoPayApiReadyResponse;
-import com.sharescrow.payment.exception.EmptyDataException;
-import com.sharescrow.payment.exception.PayReadyException;
-import com.sharescrow.payment.exception.TransactionCancelFailException;
-import com.sharescrow.payment.exception.TransactionFailException;
-import com.sharescrow.payment.exception.UnSupportedOperationException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.model.Transaction;
 import com.sharescrow.payment.service.HistoryService;
@@ -25,7 +21,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Service
 public class KakaoPayServiceImpl
@@ -63,12 +61,12 @@ public class KakaoPayServiceImpl
 			KakaoPayApiReadyResponse kakaoPayApiReadyResponse = kakaoPayApiService.ready(order);
 			historyService.saveHistory(order, HistoryStage.TRANSACTION_PENDING);
 			return kakaoPayApiReadyResponse;
-		} catch (PayReadyException e) {
+		} catch (BusinessException e) {
 			// call product for cancel
 			// Async Call
 			logger.error("Kakao Pay Ready Error order Id : ".concat(Integer.toString(order.getId())));
 			productApiService.cancelOrder(order);
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
@@ -78,39 +76,40 @@ public class KakaoPayServiceImpl
 
 	@Transactional
 	public KakaoPayApiApproveCardResponse approve(String transactionId, String pg_token) {
+		Order order = orderService.getOrderByTransactionId(transactionId);
 		try {
-			// EmptyDataException Point
-			Order order = orderService.getOrderByTransactionId(transactionId);
-			try {
-				// TransactionFailException Point
-				KakaoPayApiApproveCardResponse kakaoPayApiApproveCardResponse = kakaoPayApiService.approve(order,
-					pg_token);
-				// save snapshot
-				historyService.saveHistory(order, HistoryStage.TRANSACTION_DONE);
-				// Async enqueue
-				queueApiService.enqueue(order);
-				return kakaoPayApiApproveCardResponse;
-			} catch (TransactionFailException e) {
-				// Async Call
-				logger.error("Kakao Pay Approve Error order Id : ".concat(Integer.toString(order.getId())));
-				productApiService.cancelOrder(order);
-				throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
-				// if transaction not exist
-			}
-		} catch (EmptyDataException e) {
-			throw new UnSupportedOperationException(ErrorCode.UNSUPPORTED_OPERATION);
+			// BusinessException Point
+			KakaoPayApiApproveCardResponse kakaoPayApiApproveCardResponse = kakaoPayApiService.approve(order,
+				pg_token);
+			// save snapshot
+			historyService.saveHistory(order, HistoryStage.TRANSACTION_DONE);
+			// Async enqueue
+			queueApiService.enqueue(order);
+			return kakaoPayApiApproveCardResponse;
+		} catch (BusinessException e) {
+			// Async Call
+			logger.error("Kakao Pay Approve Error order Id : ".concat(Integer.toString(order.getId())));
+			productApiService.cancelOrder(order);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			// if transaction not exist
 		}
 	}
 
 	public KakaoPayApiCancelResponse cancel(Order order, Transaction transaction) {
+		historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_PENDING);
+		TransactionStatus txStatus =
+			dataSourceTransactionManager.getTransaction(new DefaultTransactionDefinition());
 		try {
-			historyService.saveHistory(order, HistoryStage.ORDER_CANCEL_PENDING);
+			dataSourceTransactionManager.rollback(txStatus);
 			KakaoPayApiCancelResponse kakaoPayApiCancelResponse = kakaoPayApiService.cancel(order, transaction);
 			historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
 			return kakaoPayApiCancelResponse;
-		} catch (TransactionCancelFailException e) {
-			logger.error("Kakao Pay Transaction Cancel Error order Id : ".concat(Integer.toString(order.getId())));
-			throw new TransactionCancelFailException(ErrorCode.TRANASACTION_CANCEL_FAIL);
+		} catch (BusinessException e) {
+			dataSourceTransactionManager.rollback(txStatus);
+			logger.error("Internal Server Error : ".concat(Integer.toString(order.getId()))
+				.concat("MSG : ")
+				.concat(e.getMessage()));
+			throw new BusinessException(ErrorCode.TRANASACTION_CANCEL_FAIL);
 		}
 
 	}

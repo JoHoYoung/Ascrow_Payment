@@ -1,6 +1,6 @@
 package com.sharescrow.payment.service.apiService;
 
-import com.sharescrow.payment.ErrorCode;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.pay.request.naver.NaverPayApiApproveRequest;
 import com.sharescrow.payment.context.pay.request.naver.NaverPayApiCancelRequest;
 import com.sharescrow.payment.context.pay.request.naver.NaverPayApiReadyRequest;
@@ -8,8 +8,7 @@ import com.sharescrow.payment.context.pay.response.naver.NaverPayApiApproveRespo
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.naver.NaverPayApiReadyResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
-import com.sharescrow.payment.exception.TransactionCancelFailException;
-import com.sharescrow.payment.exception.TransactionFailException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.model.Transaction;
@@ -39,6 +38,7 @@ public class NaverPayApiService {
 	TransactionService transactionService;
 
 	public NaverPayApiReadyResponse ready(Order order) {
+
 		ProductValidResponse productValidResponse = productApiService.isValidOrder(order);
 
 		Transaction transaction = new Transaction();
@@ -68,7 +68,7 @@ public class NaverPayApiService {
 			.postForEntity(NaverPayURI.APPROVE.getEndPoint(), naverPayApiApproveRequest,
 				NaverPayApiApproveResponse.class);
 		if (response.getBody().getCode() != "Success") {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 		return response.getBody();
 	}
@@ -79,17 +79,18 @@ public class NaverPayApiService {
 			NaverPayApiApproveRequest naverPayApproveRequest = new NaverPayApiApproveRequest();
 			naverPayApproveRequest.setPaymentId(paymentId);
 
-			// TransactionFailException Point
+			// BusinessException Point
 			NaverPayApiApproveResponse naverPayApiApproveResponse = naverPayApiService.callApproveApi(
 				naverPayApproveRequest);
 			transaction.setTransactionKey(paymentId);
 			transaction.setState(DataState.CREATED);
 			transactionService.update(order.getTransactionId(), transaction);
+
 			return naverPayApiApproveResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
@@ -98,7 +99,7 @@ public class NaverPayApiService {
 			.postForEntity(NaverPayURI.CANCEL.getEndPoint(), naverPayApiCancelRequest,
 				NaverPayApiCancelResponse.class);
 		if (response.getBody().getCode() != "Success") {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 		return response.getBody();
 	}
@@ -116,9 +117,9 @@ public class NaverPayApiService {
 			orderService.updateOrder(order);
 			return naverPayApiCancelResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 

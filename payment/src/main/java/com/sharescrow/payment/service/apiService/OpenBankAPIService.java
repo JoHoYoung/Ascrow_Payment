@@ -1,14 +1,10 @@
 package com.sharescrow.payment.service.apiService;
 
-import com.sharescrow.payment.ErrorCode;
-import com.sharescrow.payment.context.HistoryStage;
-import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiCancelRequest;
-import com.sharescrow.payment.context.pay.request.openbank.OpenBankApiRequest;
+import com.sharescrow.payment.exception.ErrorCode;
 import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiCancelResponse;
 import com.sharescrow.payment.context.pay.response.openbank.OpenBankApiResponse;
 import com.sharescrow.payment.context.product.response.ProductValidResponse;
-import com.sharescrow.payment.exception.TransactionCancelFailException;
-import com.sharescrow.payment.exception.TransactionFailException;
+import com.sharescrow.payment.exception.BusinessException;
 import com.sharescrow.payment.model.DataState;
 import com.sharescrow.payment.model.Order;
 import com.sharescrow.payment.model.Transaction;
@@ -66,9 +62,9 @@ public class OpenBankAPIService {
 
 			return openBankApiResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
@@ -91,9 +87,9 @@ public class OpenBankAPIService {
 			orderService.updateOrder(order);
 			return openBankApiCancelResponse;
 		} catch (HttpServerErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		} catch (HttpClientErrorException e) {
-			throw new TransactionCancelFailException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
+			throw new BusinessException(ErrorCode.FAIL_PAYMENT_TRANSACTION);
 		}
 	}
 
