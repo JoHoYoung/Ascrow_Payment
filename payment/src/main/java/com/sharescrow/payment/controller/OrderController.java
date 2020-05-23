@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/order")
@@ -59,8 +58,8 @@ public class OrderController {
 	// do order
 	@PostMapping("/execute")
 	public ResponseEntity<BaseResponse> pay(@RequestParam("payType") String payType,
-		@RequestBody Order params) {
-		return new ResponseEntity<>(new DataResponse<>(payServiceFactory.getPay(payType).execute(params)),
+		@RequestBody Order order) {
+		return new ResponseEntity<>(new DataResponse<>(payServiceFactory.getPay(payType).execute(order)),
 			HttpStatus.CREATED);
 	}
 
@@ -97,8 +96,8 @@ public class OrderController {
 
 	//------------------------------------- for test ( because we can't actually do payment) -------------------------//
 	@PostMapping("/execute/test")
-	public ResponseEntity<BaseResponse> payTest(@RequestBody String params) {
-		return new ResponseEntity<>(testPayService.execute(params)
+	public ResponseEntity<BaseResponse> payTest(@RequestBody Order order) {
+		return new ResponseEntity<>(new DataResponse(testPayService.execute(order))
 		, HttpStatus.OK);
 	}
 
