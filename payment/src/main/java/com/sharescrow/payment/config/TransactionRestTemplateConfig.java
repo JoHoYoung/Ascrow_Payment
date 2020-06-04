@@ -36,6 +36,7 @@ public class TransactionRestTemplateConfig {
 	private String OPEN_BANK_KEY;
 
 	public class RestTemplateClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+
 		@Override
 		public ClientHttpResponse intercept(HttpRequest request,
 			byte[] body, ClientHttpRequestExecution execution) throws IOException {

@@ -19,7 +19,6 @@ public class Transaction {
 	private String platform;
 	private String transactionKey;
 	private Integer transactionAmount;
-
 	@Setter
 	@Builder.Default
 	private DataState state = DataState.CREATED;

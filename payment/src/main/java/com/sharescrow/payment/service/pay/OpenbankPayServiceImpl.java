@@ -74,6 +74,7 @@ public class OpenbankPayServiceImpl implements PayService<OpenBankApiResponse, O
 		try {
 			OpenBankApiCancelResponse openBankApiCancelResponse = openBankAPIService.cancel(order, transaction);
 			historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
+			dataSourceTransactionManager.commit(txStatus);
 			return openBankApiCancelResponse;
 		} catch (BusinessException e) {
 			dataSourceTransactionManager.rollback(txStatus);

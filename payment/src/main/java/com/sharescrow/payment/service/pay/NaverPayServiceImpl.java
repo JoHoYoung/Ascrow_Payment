@@ -93,6 +93,7 @@ public class NaverPayServiceImpl implements PayService<NaverPayApiReadyResponse,
 		try {
 			NaverPayApiCancelResponse naverPayApiCancelResponse = naverPayApiService.cancel(transaction, order);
 			historyService.saveHistory(order, HistoryStage.TRANSACTION_CANCEL_DONE);
+			dataSourceTransactionManager.commit(txStatus);
 			return naverPayApiCancelResponse;
 		} catch (BusinessException e) {
 			dataSourceTransactionManager.rollback(txStatus);
